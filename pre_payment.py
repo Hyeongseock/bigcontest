@@ -5,20 +5,20 @@ from sklearn.ensemble import RandomForestClassifier #bagging을 위해 호출
 from sklearn import metrics
 
 
-def read_file(file_name) :
-    data = pd.read_csv(file_name + ".csv")
+def read_file(filename) :
+    data = pd.read_csv(filename + ".csv", encoding="cp949")
+
     return data
 
-def save_file(data) :
-    data.to_csv("train_guild_data(add_member_cnt).csv", index=False)
 
-def guild_preprocess(data) :
-    data = data.dropna()
-    data.reset_index(inplace=True)
-    for i in range(len(data["guild_member_acc_id"])):
-        member = data.ix[i, "guild_member_acc_id"]
-        member = member.split(",")
-        data.ix[i, "member_cnt"] = len(member)
+def pre_payment(data, label) :
+
+    data["cnt"] = 1
+    new_data1 = pd.DataFrame(data.groupby("acc_id").sum()['cnt']).reset_index()
+    new_data2 = pd.DataFrame(data.groupby("acc_id").mean()['payment_amount']).reset_index()
+    new_data2.drop(["acc_id"], axis=1, inplace=True)
+    data = pd.concat([new_data1, new_data2], axis=1)
+    data = pd.merge(data, label, on="acc_id", how="left")
 
     return data
 
@@ -26,7 +26,7 @@ def rf_train(data) :
     label = data["label"]
     label = pd.get_dummies(label, drop_first=True)
 
-    independent_variable = data[["member_cnt"]]
+    independent_variable = data[["payment_amount"]]
 
     #print('Training Features Shape:', independent_variable.shape)
     #print('Training Labels Shape:', label.shape)
@@ -49,12 +49,17 @@ def rf_train(data) :
 
 
 
+def save_file(data):
+    data.to_csv("new_train_payment.csv", index=False)
+
+
 def main() :
-    data = read_file("train_guild_new")
-    data = guild_preprocess(data)
-    save_file(data)
-    data = read_file("train_guild_data(add_member_cnt)")
+    data = read_file("train_payment")
+    label = read_file("train_label")
+    data = pre_payment(data, label)
+    #save_file(data)
+
     rf_train(data)
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     main()

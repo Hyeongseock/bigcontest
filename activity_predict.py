@@ -22,8 +22,17 @@ def get_play_wk_cnt_for_test(data) :
 
 
 def get_play_cnt_dt(data) :
-
-    week_cnt_data = data.groupby(["acc_id"], as_index=False)["cnt_dt","play_time"].mean()
+    week_cnt_data = data.groupby(["acc_id"], as_index=False)["cnt_dt","play_time","npc_exp", "npc_hongmun",
+                                                             "quest_exp","quest_hongmun","item_hongmun","game_combat_time",
+                                                             "get_money", "duel_cnt",	"duel_win", "partybattle_cnt",
+                                                             "partybattle_win", "cnt_enter_inzone_solo",
+                                                             "cnt_enter_inzone_light", "cnt_enter_inzone_skilled",
+                                                             "cnt_enter_inzone_normal",	"cnt_enter_raid",	"cnt_enter_raid_light",
+                                                             "cnt_enter_bam",	"cnt_clear_inzone_solo",	"cnt_clear_inzone_light",
+                                                             "cnt_clear_inzone_skilled",	"cnt_clear_inzone_normal",	"cnt_clear_raid",
+                                                             "cnt_clear_raid_light",	"cnt_clear_bam",	"normal_chat",	"whisper_chat",
+                                                             "district_chat",	"party_chat",	"guild_chat",	"faction_chat",
+                                                             "cnt_use_buffitem",	"gathering_cnt",	"making_cnt"].mean()
     week_cnt_data = pd.DataFrame(week_cnt_data)
     #print(week_cnt_data)
     return week_cnt_data
@@ -74,22 +83,23 @@ def get_result_data(test_data, rf_pre) :
     result.drop(["wk","1","2"], axis=1, inplace=True)
     return result
 
-def save_file(data) :
-    data.to_csv("result.csv", index=False)
+def save_file(data, filename) :
+    data.to_csv(filename, index=False)
 
 def main() :
-    train_data =read_file("train_acitivity_new")
+    train_data =read_file("train_acitivity_new(add_label)")
     #rf_train(data)
     a = get_play_wk_cnt(train_data)
     b = get_play_cnt_dt(train_data)
     train_data = concat_data(a, b)
-    test_data = read_file("test_activity")
-    c = get_play_wk_cnt_for_test(test_data)
-    d = get_play_cnt_dt(test_data)
-    test_data = concat_data(c, d)
-    result = rf_train(train_data, test_data)
-    result = get_result_data(test_data,result)
-    save_file(result)
+    save_file(train_data, "activity_data.csv")
+    #test_data = read_file("test_activity")
+    #c = get_play_wk_cnt_for_test(test_data)
+    #d = get_play_cnt_dt(test_data)
+    #test_data = concat_data(c, d)
+    #result = rf_train(train_data, test_data)
+    #result = get_result_data(test_data,result)
+    #save_file(result)
 
 
 if __name__ == "__main__" :
