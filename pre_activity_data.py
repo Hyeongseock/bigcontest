@@ -23,18 +23,8 @@ def get_play_wk_cnt(data) :
 #유저(acc_id)별로 활동지수를 계산하는 함수
 #사용할 변수 별로 sum 이나 mean function 중 골라서 사용할 것
 #저는 귀찮아서 다 mean()해서 사용했습니다. 원래는 이럼 안됩니당.
-def get_play_cnt_dt(data) :
-    week_cnt_data = data.groupby(["acc_id"], as_index=False)["cnt_dt","play_time","npc_exp", "npc_hongmun",
-                                                             "quest_exp","quest_hongmun","item_hongmun","game_combat_time",
-                                                             "get_money", "duel_cnt",	"duel_win", "partybattle_cnt",
-                                                             "partybattle_win", "cnt_enter_inzone_solo",
-                                                             "cnt_enter_inzone_light", "cnt_enter_inzone_skilled",
-                                                             "cnt_enter_inzone_normal",	"cnt_enter_raid",	"cnt_enter_raid_light",
-                                                             "cnt_enter_bam",	"cnt_clear_inzone_solo",	"cnt_clear_inzone_light",
-                                                             "cnt_clear_inzone_skilled",	"cnt_clear_inzone_normal",	"cnt_clear_raid",
-                                                             "cnt_clear_raid_light",	"cnt_clear_bam",	"normal_chat",	"whisper_chat",
-                                                             "district_chat",	"party_chat",	"guild_chat",	"faction_chat",
-                                                             "cnt_use_buffitem",	"gathering_cnt",	"making_cnt"].mean()
+def get_play_cnt_dt(data, columns) :
+    week_cnt_data = data.groupby(["acc_id"], as_index=False)[columns].mean()#sum()으로 해도 됩니다.
     week_cnt_data = pd.DataFrame(week_cnt_data)
 
     return week_cnt_data
