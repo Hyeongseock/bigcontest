@@ -1,7 +1,8 @@
 import pre_activity_data as act
-
+import pre_guild_data as gld
 
 def main() :
+    '''
 #---------------activity_data 전처리하기-----------------------------------------------
     #train_activity 데이터 전처리 하기
     activity = "C:/Users/ohs/Downloads/final_data_rev/train/train_activity"
@@ -38,8 +39,46 @@ def main() :
     data = act.concat_data(wk_data, other_data)  # wk + other data 합치기
     new_activity = "C:/Users/ohs/Downloads/final_data_rev/test/new_test_activity"
     act.save_file(data, new_activity)
+    '''
 
-#---------------다른 데이터 전처리하기-----------------------------------------------
+#---------------guild_data 전처리하기-----------------------------------------------
+    #train_data 전처리하기
+    guild = "C:/Users/ohs/Downloads/final_data_rev/train/train_guild"
+    label = "C:/Users/ohs/Downloads/final_data_rev/train/train_label"
+    guild_data = gld.read_file(guild)
+    label_data = gld.read_file(label)
+
+    guild_data = gld.get_guild_member_cnt(guild_data)
+    guild_member_avg = gld.get_guild_member_avg(guild_data)
+    guild_member_cnt = gld.get_join_guild_cnt(guild_data)
+    guild_data = gld.concat_data(guild_member_avg,guild_member_cnt)
+    guild_data = gld.concat_data(label_data, guild_data)
+    guild_data.fillna(0, inplace=True)
+
+    new_guild = "C:/Users/ohs/Downloads/final_data_rev/train/new_train_guild"
+    gld.save_file(guild_data, new_guild)
+
+
+    #test_data 전처리하기
+    guild = "C:/Users/ohs/Downloads/final_data_rev/test/test_guild"
+    label = "C:/Users/ohs/Downloads/final_data_rev/test/test_activity"#acc_id가져오기위해사용
+    guild_data = gld.read_file(guild)
+    label_data = gld.read_file(label)
+    label_data = gld.get_acc_id(label_data)
+
+    guild_data = gld.get_guild_member_cnt(guild_data)
+    guild_member_avg = gld.get_guild_member_avg(guild_data)
+    guild_member_cnt = gld.get_join_guild_cnt(guild_data)
+    guild_data = gld.concat_data(guild_member_avg,guild_member_cnt)
+    guild_data = gld.concat_data(label_data, guild_data)
+    guild_data.fillna(0, inplace=True)
+
+    new_guild = "C:/Users/ohs/Downloads/final_data_rev/test/new_test_guild"
+    gld.save_file(guild_data, new_guild)
+
+
+
+
 
 if __name__ == "__main__" :
     main()
